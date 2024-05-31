@@ -4,7 +4,7 @@ import PathingVisualizer from "./PathingVisualizer/PathingVisualizer";
 function App() {
   return (
     <div className="App">
-      <PathingVisualizer></PathingVisualizer>
+      <PathingVisualizer />
     </div>
   );
 }
