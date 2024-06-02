@@ -3,7 +3,16 @@ import "./Node.css";
 
 export default class Node extends Component {
   render() {
-    const { row, col, isStart, isEnd, isWall } = this.props;
+    const {
+      row,
+      col,
+      isStart,
+      isEnd,
+      isWall,
+      onMouseDown,
+      onMouseEnter,
+      onMouseUp,
+    } = this.props;
     const extraClassName = isStart
       ? "node-start"
       : isEnd
@@ -13,7 +22,13 @@ export default class Node extends Component {
       : "";
 
     return (
-      <div id={`node-${row}-${col}`} className={`node ${extraClassName}`}></div>
+      <div
+        id={`node-${row}-${col}`}
+        className={`node ${extraClassName}`}
+        onMouseDown={() => onMouseDown(row, col)}
+        onMouseEnter={() => onMouseEnter(row, col)}
+        onMouseUp={() => onMouseUp()}
+      ></div>
     );
   }
 }

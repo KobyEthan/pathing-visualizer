@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Node from "./Node/Node";
 import "./PathingVisualizer.css";
+import { dijkstra, getNodesInShortestPathOrder } from "../Algorithms/dijkstra";
 
 const START_NODE_ROW = 10;
 const START_NODE_COL = 10;
@@ -34,32 +35,74 @@ export default class PathingVisualizer extends Component {
     this.setState({ mouseIsPressed: false });
   }
 
+  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
+    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+      if (i === visitedNodesInOrder.length) {
+        setTimeout(() => {
+          this.animateShortestPath(nodesInShortestPathOrder);
+        }, 10 * i);
+        return;
+      }
+      setTimeout(() => {
+        const node = visitedNodesInOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-visited";
+      }, 10 * i);
+    }
+  }
+
+  animateShortestPath(nodesInShortestPathOrder) {
+    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPathOrder[i];
+        document.getElementById(`node-${node.row}-${node.col}`).className =
+          "node node-shortest-path";
+      }, 50 * i);
+    }
+  }
+
+  visualizeDijkstra() {
+    const { grid } = this.state;
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[END_NODE_ROW][END_NODE_COL];
+    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
+    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
+    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
   render() {
     const { grid, mouseIsPressed } = this.state;
     return (
-      <div className="grid-container">
-        <div className="grid">
-          {grid.flat().map((node, idx) => {
-            const { row, col, isStart, isEnd, isWall } = node;
-            return (
-              <Node
-                key={idx}
-                row={row}
-                col={col}
-                isStart={isStart}
-                isEnd={isEnd}
-                isWall={isWall}
-                mouseIsPressed={mouseIsPressed}
-                onMouseDown={(row, col) => this.handleMouseDown(row, col)}
-                onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
-              ></Node>
-            );
-          })}
+      <>
+        <button onClick={() => this.visualizeDijkstra()}>
+          Visualize Dijkstra's Algorithm
+        </button>
+        <div className="grid-container">
+          <div className="grid">
+            {grid.flat().map((node, idx) => {
+              const { row, col, isStart, isEnd, isWall } = node;
+              return (
+                <Node
+                  key={idx}
+                  row={row}
+                  col={col}
+                  isStart={isStart}
+                  isEnd={isEnd}
+                  isWall={isWall}
+                  mouseIsPressed={mouseIsPressed}
+                  onMouseDown={(row, col) => this.handleMouseDown(row, col)}
+                  onMouseEnter={(row, col) => this.handleMouseEnter(row, col)}
+                  onMouseUp={() => this.handleMouseUp()}
+                ></Node>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 }
+
 const createGrid = () => {
   const grid = [];
   for (let row = 0; row < 20; row++) {
