@@ -74,9 +74,14 @@ export default class PathingVisualizer extends Component {
     const { grid, mouseIsPressed } = this.state;
     return (
       <>
-        <button onClick={() => this.visualizeDijkstra()}>
-          Visualize Dijkstra's Algorithm
-        </button>
+        <div className="control-bar">
+          <button
+            className="algo-button"
+            onClick={() => this.visualizeDijkstra()}
+          >
+            Visualize Dijkstra's Algorithm
+          </button>
+        </div>
         <div className="grid-container">
           <div className="grid">
             {grid.flat().map((node, idx) => {
